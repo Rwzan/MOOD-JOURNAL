@@ -1,11 +1,30 @@
 "use client";
 
 import { useState } from "react";
-
+import { useEffect } from "react";
+// ⭐️ إنشاء نجوم عشوائية
+const stars = Array.from({ length: 40 }).map(() => ({
+  left: Math.random() * 100, // مكان النجمة أفقيًا
+  top: Math.random() * 100,  // مكانها عموديًا
+  size: Math.random() * 3 + 1, // حجم النجمة
+  duration: Math.random() * 5 + 3, // سرعة الحركة
+}));
 export default function Home() {
 
   // 🎯 نخزن المود الحالي
   const [mood, setMood] = useState("");
+  // 💾 تحميل المود عند فتح الموقع
+useEffect(() => {
+  const savedMood = localStorage.getItem("mood");
+  if (savedMood) {
+    setMood(savedMood);
+  }
+}, []);
+
+// 💾 حفظ المود كل ما يتغير
+useEffect(() => {
+  localStorage.setItem("mood", mood);
+}, [mood]);
 
   // 🌈 نحدد الخلفية حسب المود
   const getBackground = () => {
@@ -35,8 +54,22 @@ export default function Home() {
   };
 
   return (
+    
     <main className={`min-h-screen relative flex items-center justify-center text-white overflow-hidden transition-all duration-700 ${getBackground()}`}>
-
+      {/* ⭐️ النجوم المتحركة */}
+{stars.map((star, i) => (
+  <div
+    key={i}
+    className="absolute bg-white rounded-full opacity-70 animate-pulse"
+    style={{
+      left: `${star.left}%`,
+      top: `${star.top}%`,
+      width: `${star.size}px`,
+      height: `${star.size}px`,
+      animationDuration: `${star.duration}s`,
+    }}
+  />
+))}
       {/* ✨ glow effects */}
       <div className="absolute w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-30 top-10 left-10" />
       <div className="absolute w-96 h-96 bg-pink-400 rounded-full blur-3xl opacity-30 bottom-10 right-10" />
